@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"log"
 	"math"
 	"math/big"
 )
@@ -13,14 +14,15 @@ import (
 
 // 1. Take data from the block
 // 2. Create a counter (nonce) starting at 0
-// 3. Create a hash of the data plaus the nonce
+// 3. Create a hash of the data plus the nonce
 // 4. Check the hash to see if it meets the requirements
 
 // Requirements:
 // i) First few bytes must contain 0s
 
 // Difficulty affects the requirements
-const Difficulty = 12
+// Hence affecting the time taken to do the proofofwork work
+const Difficulty = 18
 
 // ProofOfWork structure
 type ProofOfWork struct {
@@ -51,6 +53,7 @@ func (pow ProofOfWork) InitData(nonce int) []byte {
 	return data
 }
 
+// Run does the actual work for the proof
 func (pow *ProofOfWork) Run() (int, []byte) {
 	nonce := 0
 
@@ -62,6 +65,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		hash = sha256.Sum256(data)
 
 		fmt.Printf("\r%x", hash)
+		intHash.SetBytes(hash[:])
 
 		if intHash.Cmp(pow.Target) == -1 {
 			break
@@ -75,14 +79,26 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 	return nonce, hash[:]
 }
 
+// Validate validates the calculated hash
+// computationally easier than the actual proof done in Run function
+func (pow *ProofOfWork) Validate() bool {
+	var intHash big.Int
+
+	data := pow.InitData(pow.Block.Nonce) //TODO: Law of demeter?
+
+	hash := sha256.Sum256(data)
+	intHash.SetBytes(hash[:])
+	return intHash.Cmp(pow.Target) == -1
+}
+
 // ====================== UTILITIES ======================
 
 func toHex(no int64) []byte {
 	buff := new(bytes.Buffer)
-
 	err := binary.Write(buff, binary.BigEndian, no)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
+
 	}
 
 	return buff.Bytes()
