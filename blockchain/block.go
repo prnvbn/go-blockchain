@@ -1,4 +1,4 @@
-package main
+package blockchain
 
 import (
 	"bytes"
@@ -7,23 +7,23 @@ import (
 
 // Block type
 type Block struct {
-	hash     []byte
-	data     []byte
-	prevHash []byte
+	Hash     []byte
+	Data     []byte
+	PrevHash []byte
 }
 
 // DeriveHash derives the hash for the given block using prevHash and the block data
 func (b *Block) DeriveHash() {
-	info := bytes.Join([][]byte{b.data, b.prevHash}, []byte{})
+	info := bytes.Join([][]byte{b.Data, b.PrevHash}, []byte{})
 	hash := sha256.Sum256(info) //TODO: Replace sha256
-	b.hash = hash[:]
+	b.Hash = hash[:]
 }
 
 // CreateBlock creates a block with a hash derived from the data and the prevHash
 func CreateBlock(data string, prevHash []byte) *Block {
 	block := &Block{
-		data:     []byte(data),
-		prevHash: prevHash,
+		Data:     []byte(data),
+		PrevHash: prevHash,
 	}
 	block.DeriveHash()
 	return block

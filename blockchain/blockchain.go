@@ -1,15 +1,15 @@
-package main
+package blockchain
 
 // BlockChain is a list(chain) of blocks
 type BlockChain struct {
-	blocks []*Block
+	Blocks []*Block
 }
 
 //AddBlock adds a block to the blockchain
 func (chain *BlockChain) AddBlock(data string) {
-	prevBlock := chain.blocks[len(chain.blocks)-1]
-	newBlock := CreateBlock(data, prevBlock.hash)
-	chain.blocks = append(chain.blocks, newBlock)
+	prevBlock := chain.Blocks[len(chain.Blocks)-1]
+	newBlock := CreateBlock(data, prevBlock.Hash)
+	chain.Blocks = append(chain.Blocks, newBlock)
 }
 
 // Genesis returns a genesis block
