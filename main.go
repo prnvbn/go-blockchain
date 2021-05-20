@@ -2,21 +2,16 @@ package main
 
 import (
 	"go-blockchain/blockchain"
+	"go-blockchain/commandline"
+	"os"
 )
 
 func main() {
+	defer os.Exit(0)
 	chain := blockchain.InitBlockChain()
+	defer chain.Database.Close()
 
-	chain.AddBlock("FIRST BLOCK AFTER GENESIS")
-	chain.AddBlock("SECOND BLOCK AFTER GENESIS")
-	chain.AddBlock("THIRD BLOCK AFTER GENESIS")
+	cli := commandline.CommandLine{Blockchain: chain}
+	cli.Run()
 
-	// for _, b := range chain.Blocks {
-	// 	fmt.Printf("Previous Hash: %x\n", b.PrevHash)
-	// 	fmt.Printf("Data         : %s\n", b.Data)
-	// 	fmt.Printf("Hash         : %x\n", b.Hash)
-
-	// 	pow := blockchain.NewProof(b)
-	// 	fmt.Printf("PoW: %s\n\n", strconv.FormatBool(pow.Validate()))
-	// }
 }

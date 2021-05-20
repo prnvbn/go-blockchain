@@ -22,6 +22,7 @@ func InitBlockChain() *BlockChain {
 
 	// opening the database
 	opts := badger.DefaultOptions(dbPath)
+	opts.Logger = nil
 	db, err := badger.Open(opts)
 	HandleErr(err)
 
