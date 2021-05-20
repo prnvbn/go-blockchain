@@ -47,8 +47,8 @@ func (b *Block) Serialize() []byte {
 	return res.Bytes()
 }
 
-// Deserialize deserializes the byteslice into a block
-func (b *Block) Deserialize(data []byte) *Block {
+// Deserialize deserializes the byte slice into a block
+func Deserialize(data []byte) *Block {
 	var block Block
 	decoder := gob.NewDecoder(bytes.NewReader(data))
 
