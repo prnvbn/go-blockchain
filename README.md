@@ -1,7 +1,5 @@
 # go-blockchain
 
-# go-blockchain
-
 A simple blockchain module in Go
 
 
