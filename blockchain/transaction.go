@@ -15,7 +15,7 @@ type Transaction struct {
 	Outputs []TxOutput
 }
 
-// SetID calculates and sets the 
+// SetID calculates and sets the
 func (tx *Transaction) SetID() {
 	var encoded bytes.Buffer
 
@@ -64,4 +64,20 @@ func CoinBaseTx(to, data string) *Transaction {
 	tx.SetID()
 
 	return &tx
+}
+
+func (tx *Transaction) isCoinbase() bool {
+	return len(tx.Inputs) == 1 &&
+		len(tx.Inputs[0].ID) == 0 &&
+		tx.Inputs[0].Out == -1
+}
+
+// CanUnlock means the account(data) owns the information referenced by the input
+func (txin *TxInput) CanUnlock(data string) bool {
+	return txin.Sig == data
+}
+
+// CanUnlock means the account(data) owns the information referenced by the output
+func (txout *TxOutput) CanUnlock(data string) bool {
+	return txout.PubKey == data
 }
