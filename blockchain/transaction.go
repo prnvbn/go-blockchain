@@ -1,11 +1,30 @@
 package blockchain
 
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/gob"
+	"fmt"
+)
+
 // Transaction struct
 // No sensitive info should be added to this
 type Transaction struct {
 	ID      []byte
 	Inputs  []TxInput
 	Outputs []TxOutput
+}
+
+// SetID calculates and sets the 
+func (tx *Transaction) SetID() {
+	var encoded bytes.Buffer
+
+	encoder := gob.NewEncoder(&encoded)
+	err := encoder.Encode(tx)
+	HandleErr(err)
+
+	hash := sha256.Sum256(encoded.Bytes())
+	tx.ID = hash[:]
 }
 
 // TxInput is the transaction input
@@ -19,4 +38,30 @@ type TxInput struct {
 type TxOutput struct {
 	Value  int    // value in tokens
 	PubKey string // public key
+}
+
+// CoinBaseTx is the first transaction in the block
+func CoinBaseTx(to, data string) *Transaction {
+	if data == "" {
+		data = fmt.Sprintf("Coins to %s", to)
+	}
+
+	txin := TxInput{
+		ID:  []byte{},
+		Out: -1,
+		Sig: data,
+	}
+
+	txout := TxOutput{
+		Value:  100,
+		PubKey: to,
+	}
+
+	tx := Transaction{
+		Inputs:  []TxInput{txin},
+		Outputs: []TxOutput{txout},
+	}
+	tx.SetID()
+
+	return &tx
 }
