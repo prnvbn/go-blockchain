@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+	"encoding/hex"
 	"fmt"
+	"log"
 )
 
 // Transaction struct
@@ -80,4 +82,52 @@ func (txin *TxInput) CanUnlock(data string) bool {
 // CanUnlock means the account(data) owns the information referenced by the output
 func (txout *TxOutput) CanUnlock(data string) bool {
 	return txout.PubKey == data
+}
+
+// NewTransaction creates and returns a new transaction
+func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transaction) {
+	var inputs []TxInput
+	var outputs []TxOutput
+
+	acc, validOutputs := chain.FindSpendableOutputs(from, amount)
+
+	if acc < amount {
+		log.Panic("Error, not enough funds... :(")
+	}
+
+	for txid, outs := range validOutputs {
+		txID, err := hex.DecodeString(txid)
+		HandleErr(err)
+
+		for _, out := range outs {
+			input := TxInput{
+				ID:  txID,
+				Out: out,
+				Sig: from,
+			}
+			inputs = append(inputs, input)
+		}
+	}
+
+	output := TxOutput{
+		Value:  amount,
+		PubKey: to,
+	}
+	outputs = append(outputs, output)
+
+	if acc > amount {
+		output = TxOutput{
+			Value:  acc - amount,
+			PubKey: from,
+		}
+		outputs = append(outputs, output)
+	}
+
+	tx = &Transaction{
+		Inputs:  inputs,
+		Outputs: outputs,
+	}
+	tx.SetID()
+
+	return tx
 }
