@@ -150,7 +150,7 @@ func (chain *BlockChain) FindUnspentTransactions(address string) []Transaction {
 						}
 					}
 				}
-				if out.CanUnlock(address) {
+				if out.CanBeUnlockedBy(address) {
 					unspentTxs = append(unspentTxs, *tx)
 				}
 			}
@@ -178,7 +178,7 @@ func (chain *BlockChain) FindUTXO(address string) (UTXOs []TxOutput) {
 
 	for _, tx := range unspentTransactions {
 		for _, out := range tx.Outputs {
-			if out.CanUnlock(address) {
+			if out.CanBeUnlockedBy(address) {
 				UTXOs = append(UTXOs, out)
 			}
 		}
@@ -198,7 +198,7 @@ Work:
 		txID := hex.EncodeToString(tx.ID)
 
 		for outIdx, out := range tx.Outputs {
-			if out.CanUnlock(address) && accumulated < amount {
+			if out.CanBeUnlockedBy(address) && accumulated < amount {
 				accumulated += out.Value
 				unspentOuts[txID] = append(unspentOuts[txID], outIdx)
 

@@ -79,8 +79,8 @@ func (txin *TxInput) CanUnlock(data string) bool {
 	return txin.Sig == data
 }
 
-// CanUnlock means the account(data) owns the information referenced by the output
-func (txout *TxOutput) CanUnlock(data string) bool {
+// CanBeUnlockedBy means the account(data) owns the information referenced by the output
+func (txout *TxOutput) CanBeUnlockedBy(data string) bool {
 	return txout.PubKey == data
 }
 
