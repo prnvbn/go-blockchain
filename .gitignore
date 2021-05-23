@@ -15,6 +15,5 @@
 # vendor/
 
 # BadgerDB
-tmp/blocks/*
 *.vlog
 *.sst

@@ -1,0 +1,1 @@
+Empty directoy where BadgerDb will store file
