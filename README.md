@@ -13,14 +13,19 @@ There is a simple commandline application showing the module can be used. You ca
 3. `createblockchain -address ADDRESS` creates a blockchain
 4. `send -from FROM -to TO -amount -AMOUNT` makes a transaction
 
+## Demo
+I am assuming you have go properly installed on your machine. 
 
+First, we created the blockchain by proving the genesis block and subsequently having a coinbase transaction mining it. After this step, the balance at address "Pranav" is 100 (value of the coinbase transaction). Then we make a transaction from address "Pranav" to address "Manya". This first created an address "Manya" and then completed the transaction. We can see that it was succesful and that the blockchain is still valid after it.
+
+![image](https://user-images.githubusercontent.com/55818107/119258318-11675900-bbc1-11eb-87db-e147c3c1cacf.png)
 
 ## TODO
-- [x] Persistance (BadgerDB)
+- [x] Persistance
 - [X] Transactions
 - [ ] Consensus Algorithm
 - [ ] Wallet Module (In Progress)
 - [ ] Digital Signatures
 - [ ] Merkle Tree
-
-If you find any issues or have an feature requests feel free to create an issue or a pull request :)
+- [ ] Dynamic Difficulty
+If you find any issues, typos, errors or have any feature requests, feel free to create an issue or a pull request :)
