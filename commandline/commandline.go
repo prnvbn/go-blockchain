@@ -52,7 +52,7 @@ func (cli *CommandLine) printBlockChain() {
 func (cli *CommandLine) createBlockChain(address string) {
 	chain := blockchain.InitBlockChain(address)
 	chain.Database.Close()
-	fmt.Printf("Created blockchain with address %s\n", address)
+	fmt.Printf("Genesis mined by address %s\n", address)
 }
 
 func (cli *CommandLine) getBalance(address string) {

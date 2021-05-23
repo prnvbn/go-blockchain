@@ -52,7 +52,7 @@ func InitBlockChain(address string) *BlockChain {
 	err = db.Update(func(txn *badger.Txn) error {
 		cbtx := CoinBaseTx(address, genesisData)
 		genesis := Genesis(cbtx)
-		fmt.Println("Genesis Created")
+		fmt.Println("Genesis Proved")
 		err = txn.Set(genesis.Hash, genesis.Serialize())
 		HandleErr(err)
 		err = txn.Set([]byte("lh"), genesis.Hash)
