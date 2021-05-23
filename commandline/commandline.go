@@ -17,7 +17,7 @@ type CommandLine struct{}
 func (cli *CommandLine) printUsage() {
 	fmt.Println("Usage:")
 	fmt.Println(" printchain - Prints all the blocks in the chain")
-	fmt.Println(" getbalance -address ADDRESS - get the balance for a given address")
+	fmt.Println(" getbalance -address ADDRESS - gets the balance for a given address")
 	fmt.Println(" createblockchain -address ADDRESS - creates a blockchain")
 	fmt.Println(" send -from FROM -to TO -amount -AMOUNT Send amount")
 
