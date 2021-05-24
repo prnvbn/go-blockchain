@@ -53,3 +53,11 @@ func PublicKeyHash(pubKey []byte) []byte {
 	return hasher.Sum(nil)
 }
 
+// Checksum return the first 4 bytes of the payload after it has been hashed twice
+func Checksum(payload []byte) (checksum []byte) {
+	firstHash := sha256.Sum256(payload)
+	secondHash := sha256.Sum256(firstHash[:])
+
+	checksum = secondHash[:checksumLength]
+	return checksum
+}
