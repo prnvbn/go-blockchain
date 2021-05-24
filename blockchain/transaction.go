@@ -29,18 +29,6 @@ func (tx *Transaction) SetID() {
 	tx.ID = hash[:]
 }
 
-// TxInput is the transaction input
-type TxInput struct {
-	ID  []byte // transaction ID
-	Out int    // index of the output
-	Sig string // digital signature
-}
-
-// TxOutput is the transaction output
-type TxOutput struct {
-	Value  int    // value in tokens
-	PubKey string // public key
-}
 
 // CoinBaseTx is the first transaction in the block
 func CoinBaseTx(to, data string) *Transaction {
@@ -72,16 +60,6 @@ func (tx *Transaction) isCoinbase() bool {
 	return len(tx.Inputs) == 1 &&
 		len(tx.Inputs[0].ID) == 0 &&
 		tx.Inputs[0].Out == -1
-}
-
-// CanUnlock means the account(data) owns the information referenced by the input
-func (txin *TxInput) CanUnlock(data string) bool {
-	return txin.Sig == data
-}
-
-// CanBeUnlockedBy means the account(data) owns the information referenced by the output
-func (txout *TxOutput) CanBeUnlockedBy(data string) bool {
-	return txout.PubKey == data
 }
 
 // NewTransaction creates and returns a new transaction
