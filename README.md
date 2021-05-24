@@ -20,6 +20,8 @@ First, we created the blockchain by proving the genesis block and subsequently h
 
 ![image](https://user-images.githubusercontent.com/55818107/119258318-11675900-bbc1-11eb-87db-e147c3c1cacf.png)
 
+If you find any issues, typos, errors or have any feature requests, feel free to create an issue or a pull request :)
+
 ## TODO
 - [x] Persistance
 - [X] Transactions
@@ -28,4 +30,8 @@ First, we created the blockchain by proving the genesis block and subsequently h
 - [ ] Digital Signatures
 - [ ] Merkle Tree
 - [ ] Dynamic Difficulty
-If you find any issues, typos, errors or have any feature requests, feel free to create an issue or a pull request :)
+
+Being added with wallets. 
+![image](https://user-images.githubusercontent.com/55818107/119389459-9175e780-bcc3-11eb-97e2-9d6c87903f80.png)
+
+
