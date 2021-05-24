@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
+	"go-blockchain/errors"
 	"log"
 )
 
@@ -23,12 +24,11 @@ func (tx *Transaction) SetID() {
 
 	encoder := gob.NewEncoder(&encoded)
 	err := encoder.Encode(tx)
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	hash := sha256.Sum256(encoded.Bytes())
 	tx.ID = hash[:]
 }
-
 
 // CoinBaseTx is the first transaction in the block
 func CoinBaseTx(to, data string) *Transaction {
@@ -75,7 +75,7 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 
 	for txid, outs := range validOutputs {
 		txID, err := hex.DecodeString(txid)
-		HandleErr(err)
+		errors.HandleErr(err)
 
 		for _, out := range outs {
 			input := TxInput{

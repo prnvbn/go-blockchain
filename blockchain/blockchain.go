@@ -3,6 +3,7 @@ package blockchain
 import (
 	"encoding/hex"
 	"fmt"
+	"go-blockchain/errors"
 	"os"
 	"runtime"
 
@@ -46,7 +47,7 @@ func InitBlockChain(address string) *BlockChain {
 	opts := badger.DefaultOptions(dbPath)
 	opts.Logger = nil
 	db, err := badger.Open(opts)
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	var lastHash []byte
 	err = db.Update(func(txn *badger.Txn) error {
@@ -54,13 +55,13 @@ func InitBlockChain(address string) *BlockChain {
 		genesis := Genesis(cbtx)
 		fmt.Println("Genesis Proved")
 		err = txn.Set(genesis.Hash, genesis.Serialize())
-		HandleErr(err)
+		errors.HandleErr(err)
 		err = txn.Set([]byte("lh"), genesis.Hash)
 
 		lastHash = genesis.Hash
 		return err
 	})
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	return &BlockChain{
 		Database: db,
@@ -80,11 +81,11 @@ func ContinueBlockChain(address string) *BlockChain {
 	opts := badger.DefaultOptions(dbPath)
 	opts.Logger = nil
 	db, err := badger.Open(opts)
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	err = db.Update(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte("lh"))
-		HandleErr(err)
+		errors.HandleErr(err)
 		item.Value(func(val []byte) error {
 			lastHash = val
 			return nil
@@ -92,7 +93,7 @@ func ContinueBlockChain(address string) *BlockChain {
 
 		return err
 	})
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	return &BlockChain{lastHash, db}
 }
@@ -107,20 +108,20 @@ func (chain *BlockChain) AddBlock(transactions []*Transaction) {
 	// Getting the last hash and creating a new block
 	err := chain.Database.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte("lh"))
-		HandleErr(err)
+		errors.HandleErr(err)
 		err = item.Value(func(val []byte) error {
 			lastHash = val
 			return nil
 		})
 		return err
 	})
-	HandleErr(err)
+	errors.HandleErr(err)
 	newBlock := CreateBlock(transactions, lastHash)
 
 	// Updating the last hash key
 	err = chain.Database.Update(func(txn *badger.Txn) error {
 		err := txn.Set(newBlock.Hash, newBlock.Serialize())
-		HandleErr(err)
+		errors.HandleErr(err)
 		err = txn.Set([]byte("lh"), newBlock.Hash)
 		chain.LastHash = newBlock.Hash
 		return err

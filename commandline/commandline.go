@@ -3,6 +3,7 @@ package commandline
 import (
 	"flag"
 	"fmt"
+
 	"go-blockchain/blockchain"
 	"log"
 	"os"

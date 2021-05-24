@@ -1,6 +1,10 @@
 package blockchain
 
-import "github.com/dgraph-io/badger"
+import (
+	"go-blockchain/errors"
+
+	"github.com/dgraph-io/badger"
+)
 
 // BCIterator is an Iterator for block chain
 // TODO? Use interface
@@ -23,7 +27,7 @@ func (iter *BCIterator) Next() *Block {
 
 	err := iter.Database.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(iter.CurrentHash)
-		HandleErr(err)
+		errors.HandleErr(err)
 		var encodedBlock []byte
 		item.Value(func(val []byte) error {
 			encodedBlock = val
@@ -34,7 +38,7 @@ func (iter *BCIterator) Next() *Block {
 
 		return nil
 	})
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	iter.CurrentHash = block.PrevHash
 

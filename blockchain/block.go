@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
-	"log"
+	"go-blockchain/errors"
 )
 
 // Block type
@@ -57,7 +57,7 @@ func (b *Block) Serialize() []byte {
 	encoder := gob.NewEncoder(&res)
 
 	err := encoder.Encode(b)
-	HandleErr(err)
+	errors.HandleErr(err)
 
 	return res.Bytes()
 }
@@ -68,13 +68,13 @@ func Deserialize(data []byte) *Block {
 	decoder := gob.NewDecoder(bytes.NewReader(data))
 
 	err := decoder.Decode(&block)
-	HandleErr(err)
+	errors.HandleErr(err)
 	return &block
 }
 
-// HandleErr panics and logs the error
-func HandleErr(err error) {
-	if err != nil {
-		log.Panic(err)
-	}
-}
+// // HandleErr panics and logs the error
+// func HandleErr(err error) {
+// 	if err != nil {
+// 		log.Panic(err)
+// 	}
+// }
