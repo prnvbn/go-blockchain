@@ -12,6 +12,8 @@ There is a simple commandline application showing the module can be used. You ca
 2. `getbalance -address ADDRESS` gets the balance for a given address
 3. `createblockchain -address ADDRESS` creates a blockchain
 4. `send -from FROM -to TO -amount -AMOUNT` makes a transaction
+5. `createwallet` - Creates a new Wallet
+6. `listaddresses` - Lists the addresses in our wallet file
 
 ## Demo
 I am assuming you have go properly installed on your machine. 
@@ -26,10 +28,12 @@ If you find any issues, typos, errors or have any feature requests, feel free to
 - [x] Persistance
 - [X] Transactions
 - [ ] Consensus Algorithm
-- [ ] Wallet Module (In Progress)
+- [X] Wallet Module (In Progress)
+- [ ] Connect wallet Module and the blockchain
 - [ ] Digital Signatures
 - [ ] Merkle Tree
 - [ ] Dynamic Difficulty
+- [ ] Improve the CLI Package
 
 Being added with wallets. 
 ![image](https://user-images.githubusercontent.com/55818107/119389459-9175e780-bcc3-11eb-97e2-9d6c87903f80.png)
