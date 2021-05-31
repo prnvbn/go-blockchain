@@ -22,6 +22,7 @@ type Wallet struct {
 	PublicKey  []byte
 }
 
+// Address generates an address for a wallet
 func (w Wallet) Address() []byte {
 	pubHash := PublicKeyHash(w.PublicKey)
 	versionedHash := append([]byte{version}, pubHash...)
