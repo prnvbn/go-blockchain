@@ -28,8 +28,8 @@ If you find any issues, typos, errors or have any feature requests, feel free to
 - [x] Persistance
 - [X] Transactions
 - [ ] Consensus Algorithm
-- [X] Wallet Module (In Progress)
-- [ ] Connect wallet Module and the blockchain
+- [X] Wallet Module
+- [ ] Connect wallet Module and the blockchain (In Progress)
 - [ ] Digital Signatures
 - [ ] Merkle Tree
 - [ ] Dynamic Difficulty
