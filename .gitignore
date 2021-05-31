@@ -17,4 +17,5 @@
 # BadgerDB
 *.vlog
 *.sst
+*.data
 MANIFEST

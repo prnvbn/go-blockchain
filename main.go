@@ -1,15 +1,16 @@
 package main
 
 import (
-	"go-blockchain/wallet"
+	"go-blockchain/commandline"
+	"os"
 )
 
 func main() {
-	// defer os.Exit(0)
+	defer os.Exit(0)
 
-	// cli := commandline.CommandLine{}
-	// cli.Run()
-	w := wallet.CreateWallet()
-	w.Address()
+	cli := commandline.CommandLine{}
+	cli.Run()
+	// w := wallet.CreateWallet()
+	// w.Address()
 
 }
