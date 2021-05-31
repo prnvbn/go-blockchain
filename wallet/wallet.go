@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"fmt"
 	"go-blockchain/errors"
 
 	"golang.org/x/crypto/ripemd160"
@@ -19,6 +20,19 @@ const (
 type Wallet struct {
 	PrivateKey ecdsa.PrivateKey
 	PublicKey  []byte
+}
+
+func (w Wallet) Address() []byte {
+	pubHash := PublicKeyHash(w.PublicKey)
+	versionedHash := append([]byte{version}, pubHash...)
+	checksum := Checksum(versionedHash)
+	fullHash := append(versionedHash, checksum...)
+	address := Base58Encode(fullHash)
+
+	fmt.Printf("pub key: %x\n", w.PublicKey)
+	fmt.Printf("pub hash: %x\n", pubHash)
+	fmt.Printf("address: %x\n", address)
+	return address
 }
 
 // NewKeyPair generate a pair of of public and private key
