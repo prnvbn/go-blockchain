@@ -14,11 +14,12 @@ func HandleErr(err error) {
 
 type errorType int
 
-var errorTypes = []string{"TransactionNotFoundError"}
-
 const (
 	transactionNotFoundErr = iota + 1
+	invalidAddressErr
 )
+
+var errorTypes = []string{"TransactionNotFoundError", "InvalidAddressError"}
 
 func (e errorType) String() string {
 	return red(errorTypes[e-1])
@@ -36,8 +37,14 @@ func red(s string) string {
 
 /************************************ FACTORY METHODS ************************************/
 
-// NewTransactionNotFound returns
+// NewTransactionNotFoundError returns
 // TransactionNotFoundError: No transaction found with ID: ID
-func NewTransactionNotFound(ID []byte) error {
+func NewTransactionNotFoundError(ID []byte) error {
 	return newError(transactionNotFoundErr, "No transaction found with ID %s", ID)
+}
+
+// NewInvalidAddressError returns
+// InvalidAddressError: ADDRESS is not a valid address
+func NewInvalidAddressError(address string) error {
+	return newError(invalidAddressErr, "%s is not a valid address", address)
 }

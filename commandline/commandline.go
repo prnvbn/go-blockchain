@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"go-blockchain/blockchain"
+	"go-blockchain/errors"
 	"go-blockchain/wallet"
 	"log"
 	"os"
@@ -40,11 +41,15 @@ func (cli *CommandLine) printBlockChain() {
 
 	for {
 		block := iter.Next()
-		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
 		fmt.Printf("Hash         : %x\n", block.Hash)
+		fmt.Printf("Previous Hash: %x\n", block.PrevHash)
 
 		pow := blockchain.NewProof(block)
-		fmt.Printf("PoW: %s\n\n", strconv.FormatBool(pow.Validate()))
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+		for _, tx := range block.Transactions {
+			fmt.Println(tx)
+		}
+		fmt.Println()
 
 		if len(block.PrevHash) == 0 {
 			break
@@ -53,6 +58,10 @@ func (cli *CommandLine) printBlockChain() {
 }
 
 func (cli *CommandLine) createBlockChain(address string) {
+	if !wallet.ValidateAddress(address) {
+		log.Panic(errors.NewInvalidAddressError(address))
+	}
+
 	chain := blockchain.InitBlockChain(address)
 	chain.Database.Close()
 	fmt.Printf("Genesis mined by address %s\n", address)
@@ -63,7 +72,9 @@ func (cli *CommandLine) getBalance(address string) {
 	defer chain.Database.Close()
 
 	balance := 0
-	UTXOs := chain.FindUTXO(address)
+	pubKeyHash := wallet.Base58Decode([]byte(address))
+	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-wallet.ChecksumLength]
+	UTXOs := chain.FindUTXO(pubKeyHash)
 
 	for _, out := range UTXOs {
 		balance += out.Value
@@ -73,6 +84,15 @@ func (cli *CommandLine) getBalance(address string) {
 }
 
 func (cli *CommandLine) send(from, to string, amount int) {
+
+	if !wallet.ValidateAddress(to) {
+		log.Panic(errors.NewInvalidAddressError(to))
+	}
+
+	if !wallet.ValidateAddress(from) {
+		log.Panic(errors.NewInvalidAddressError(from))
+	}
+
 	chain := blockchain.ContinueBlockChain(from)
 	defer chain.Database.Close()
 

@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"go-blockchain/errors"
+	"go-blockchain/wallet"
 	"log"
 	"math/big"
 	"strings"
@@ -67,17 +68,15 @@ func CoinBaseTx(to, data string) *Transaction {
 	txin := TxInput{
 		ID:        []byte{},
 		Out:       -1,
-		Signature: data,
+		Signature: nil,
+		PubKey:    []byte(data),
 	}
 
-	txout := TxOutput{
-		Value:  100,
-		PubKey: to,
-	}
+	txout := NewTXOutput(100, to)
 
 	tx := Transaction{
 		Inputs:  []TxInput{txin},
-		Outputs: []TxOutput{txout},
+		Outputs: []TxOutput{*txout},
 	}
 	tx.SetID()
 
@@ -95,7 +94,12 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 	var inputs []TxInput
 	var outputs []TxOutput
 
-	acc, validOutputs := chain.FindSpendableOutputs(from, amount)
+	wallets, err := wallet.CreateWallets()
+	errors.HandleErr(err)
+	w := wallets.GetWallet(from)
+	pubKeyHash := wallet.PublicKeyHash(w.PublicKey)
+
+	acc, validOutputs := chain.FindSpendableOutputs(pubKeyHash, amount)
 
 	if acc < amount {
 		log.Panic("Error, not enough funds... :(")
@@ -109,23 +113,18 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 			input := TxInput{
 				ID:        txID,
 				Out:       out,
-				Signature: from,
+				Signature: nil,
+				PubKey:    w.PublicKey,
 			}
 			inputs = append(inputs, input)
 		}
 	}
 
-	output := TxOutput{
-		Value:  amount,
-		PubKey: to,
-	}
+	output := *NewTXOutput(amount, to)
 	outputs = append(outputs, output)
 
 	if acc > amount {
-		output = TxOutput{
-			Value:  acc - amount,
-			PubKey: from,
-		}
+		output = *NewTXOutput(acc-amount, from)
 		outputs = append(outputs, output)
 	}
 
@@ -133,7 +132,9 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 		Inputs:  inputs,
 		Outputs: outputs,
 	}
-	tx.SetID()
+
+	tx.ID = tx.Hash()
+	chain.SignTransaction(tx, w.PrivateKey)
 
 	return tx
 }
@@ -236,7 +237,11 @@ func (tx *Transaction) Verify(prevTXs map[string]Transaction) bool {
 		x.SetBytes(input.PubKey[:(keyLen / 2)])
 		y.SetBytes(input.PubKey[(keyLen / 2):])
 
-		rawPubKey := ecdsa.PublicKey{curve, &x, &y}
+		rawPubKey := ecdsa.PublicKey{
+			Curve: curve,
+			X:     &x,
+			Y:     &y,
+		}
 		if ecdsa.Verify(&rawPubKey, txCopy.ID, &r, &s) == false {
 			return false
 		}
