@@ -12,6 +12,7 @@ import (
 	"go-blockchain/errors"
 	"log"
 	"math/big"
+	"strings"
 )
 
 // Transaction struct
@@ -200,6 +201,7 @@ func (tx *Transaction) Sign(privKey ecdsa.PrivateKey, prevTXs map[string]Transac
 	}
 }
 
+// Verify verifies the transaction
 func (tx *Transaction) Verify(prevTXs map[string]Transaction) bool {
 	if tx.isCoinbase() {
 		return true
@@ -241,4 +243,26 @@ func (tx *Transaction) Verify(prevTXs map[string]Transaction) bool {
 	}
 
 	return true
+}
+
+func (tx Transaction) String() string {
+	var lines []string
+
+	lines = append(lines, fmt.Sprintf("Transaction %x:", tx.ID))
+
+	for i, input := range tx.Inputs {
+		lines = append(lines, fmt.Sprintf("\tInput %d:", i))
+		lines = append(lines, fmt.Sprintf("\tTXID:     %x", input.ID))
+		lines = append(lines, fmt.Sprintf("\tOut:       %d", input.Out))
+		lines = append(lines, fmt.Sprintf("\tSignature: %x", input.Signature))
+		lines = append(lines, fmt.Sprintf("\tPubKey:    %x", input.PubKey))
+	}
+
+	for i, output := range tx.Outputs {
+		lines = append(lines, fmt.Sprintf("\tOutput %d:", i))
+		lines = append(lines, fmt.Sprintf("\tValue:  %d", output.Value))
+		lines = append(lines, fmt.Sprintf("\tScript: %x", output.PubKeyHash))
+	}
+
+	return strings.Join(lines, "\n")
 }
