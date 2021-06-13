@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -19,6 +20,16 @@ const (
 type Wallet struct {
 	PrivateKey ecdsa.PrivateKey
 	PublicKey  []byte
+}
+
+// ValidateAddress compares the actual checksum to the expected checksum to validate the address
+func ValidateAddress(address string) bool {
+	pubKeyHash := Base58Decode([]byte(address))
+	actualChecksum := pubKeyHash[len(pubKeyHash)-checksumLength:]
+	version := pubKeyHash[0]
+	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-checksumLength]
+	expectedChecksum := Checksum(append([]byte{version}, pubKeyHash...))
+	return bytes.Compare(actualChecksum, expectedChecksum) == 0
 }
 
 // Address generates an address for a wallet
