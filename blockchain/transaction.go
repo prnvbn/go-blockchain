@@ -18,6 +18,29 @@ type Transaction struct {
 	Outputs []TxOutput
 }
 
+// Serialize serializes the transaction struct into bytes
+func (tx Transaction) Serialize() []byte {
+	var encoded bytes.Buffer
+
+	enc := gob.NewEncoder(&encoded)
+	err := enc.Encode(tx)
+	errors.HandleErr(err)
+
+	return encoded.Bytes()
+}
+
+// Hash hashes the transaction struct into bytes
+func (tx *Transaction) Hash() []byte {
+	var hash [32]byte
+
+	txCopy := *tx
+	txCopy.ID = []byte{}
+
+	hash = sha256.Sum256(txCopy.Serialize())
+
+	return hash[:]
+}
+
 // SetID calculates and sets the
 func (tx *Transaction) SetID() {
 	var encoded bytes.Buffer
