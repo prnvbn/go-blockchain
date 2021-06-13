@@ -20,8 +20,20 @@ There is a simple commandline application showing the module can be used. You ca
 6. `listaddresses` - Lists the addresses in our wallet file
 
 ## Demo
-I am assuming you have go properly installed on your machine. 
+I am assuming you have go properly installed on your machine.
 
+### With wallets
+
+Creating 2 wallets
+![Screenshot from 2021-06-13 16-39-21](https://user-images.githubusercontent.com/55818107/121814190-a19c3980-cc67-11eb-8463-131a91ac8727.png)
+
+Mining the genesis block
+![Screenshot from 2021-06-13 16-39-41](https://user-images.githubusercontent.com/55818107/121814202-acef6500-cc67-11eb-9e0c-c39208bfdaee.png)
+
+Making a transaction
+![Screenshot from 2021-06-13 16-55-13](https://user-images.githubusercontent.com/55818107/121814304-2ab37080-cc68-11eb-9d1e-1b9ba245f53a.png)
+
+### Without wallets
 First, we created the blockchain by proving the genesis block and subsequently having a coinbase transaction mining it. After this step, the balance at address "Pranav" is 100 (value of the coinbase transaction). Then we make a transaction from address "Pranav" to address "Manya". This first created an address "Manya" and then completed the transaction. We can see that it was succesful and that the blockchain is still valid after it.
 
 ![image](https://user-images.githubusercontent.com/55818107/119258318-11675900-bbc1-11eb-87db-e147c3c1cacf.png)
