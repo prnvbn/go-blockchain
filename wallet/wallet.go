@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	checksumLength = 4
+	//ChecksumLength is the length of the checksum
+	ChecksumLength = 4
 	version        = byte(0x00)
 )
 
@@ -25,9 +26,9 @@ type Wallet struct {
 // ValidateAddress compares the actual checksum to the expected checksum to validate the address
 func ValidateAddress(address string) bool {
 	pubKeyHash := Base58Decode([]byte(address))
-	actualChecksum := pubKeyHash[len(pubKeyHash)-checksumLength:]
+	actualChecksum := pubKeyHash[len(pubKeyHash)-ChecksumLength:]
 	version := pubKeyHash[0]
-	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-checksumLength]
+	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-ChecksumLength]
 	expectedChecksum := Checksum(append([]byte{version}, pubKeyHash...))
 	return bytes.Compare(actualChecksum, expectedChecksum) == 0
 }
@@ -83,6 +84,6 @@ func Checksum(payload []byte) (checksum []byte) {
 	firstHash := sha256.Sum256(payload)
 	secondHash := sha256.Sum256(firstHash[:])
 
-	checksum = secondHash[:checksumLength]
+	checksum = secondHash[:ChecksumLength]
 	return checksum
 }
