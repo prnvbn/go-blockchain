@@ -2,12 +2,16 @@ package blockchain
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/gob"
 	"encoding/hex"
 	"fmt"
 	"go-blockchain/errors"
 	"log"
+	"math/big"
 )
 
 // Transaction struct
@@ -60,9 +64,9 @@ func CoinBaseTx(to, data string) *Transaction {
 	}
 
 	txin := TxInput{
-		ID:  []byte{},
-		Out: -1,
-		Sig: data,
+		ID:        []byte{},
+		Out:       -1,
+		Signature: data,
 	}
 
 	txout := TxOutput{
@@ -102,9 +106,9 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 
 		for _, out := range outs {
 			input := TxInput{
-				ID:  txID,
-				Out: out,
-				Sig: from,
+				ID:        txID,
+				Out:       out,
+				Signature: from,
 			}
 			inputs = append(inputs, input)
 		}
@@ -131,4 +135,110 @@ func NewTransaction(from, to string, amount int, chain *BlockChain) (tx *Transac
 	tx.SetID()
 
 	return tx
+}
+
+// TrimmedCopy returns a copy of the transaction without the signature and the public key
+func (tx *Transaction) TrimmedCopy() Transaction {
+	var inputs []TxInput
+	var outputs []TxOutput
+
+	for _, input := range tx.Inputs {
+		inputCopy := TxInput{
+			ID:        input.ID,
+			Out:       input.Out,
+			Signature: nil,
+			PubKey:    nil,
+		}
+		inputs = append(inputs, inputCopy)
+	}
+
+	for _, output := range tx.Outputs {
+		outputCopy := TxOutput{
+			Value:      output.Value,
+			PubKeyHash: output.PubKeyHash,
+		}
+		outputs = append(outputs, outputCopy)
+	}
+
+	txCopy := Transaction{
+		ID:      tx.ID,
+		Inputs:  inputs,
+		Outputs: outputs,
+	}
+
+	return txCopy
+}
+
+// Sign signs the transaction with the passed in private key
+func (tx *Transaction) Sign(privKey ecdsa.PrivateKey, prevTXs map[string]Transaction) {
+	if tx.isCoinbase() {
+		return
+	}
+
+	for _, input := range tx.Inputs {
+		prevTx := prevTXs[hex.EncodeToString(input.ID)]
+		if prevTx.ID == nil {
+			log.Panic("ERROR: Previous transaction does not exist")
+		}
+	}
+
+	txCopy := tx.TrimmedCopy()
+
+	for inputID, input := range txCopy.Inputs {
+		prevTx := prevTXs[hex.EncodeToString(input.ID)]
+		txCopy.Inputs[inputID].Signature = nil
+		txCopy.Inputs[inputID].PubKey = prevTx.Outputs[input.Out].PubKeyHash
+		txCopy.ID = txCopy.Hash()
+		txCopy.Inputs[inputID].PubKey = nil
+
+		r, s, err := ecdsa.Sign(rand.Reader, &privKey, txCopy.ID)
+		errors.HandleErr(err)
+
+		signature := append(r.Bytes(), s.Bytes()...)
+
+		tx.Inputs[inputID].Signature = signature
+	}
+}
+
+func (tx *Transaction) Verify(prevTXs map[string]Transaction) bool {
+	if tx.isCoinbase() {
+		return true
+	}
+
+	for _, input := range tx.Inputs {
+		prevTx := prevTXs[hex.EncodeToString(input.ID)]
+		if prevTx.ID == nil {
+			log.Panic("ERROR: Previous transaction does not exist")
+		}
+	}
+
+	txCopy := tx.TrimmedCopy()
+	curve := elliptic.P256()
+
+	for inputID, input := range tx.Inputs {
+		prevTx := prevTXs[hex.EncodeToString(input.ID)]
+		txCopy.Inputs[inputID].Signature = nil
+		txCopy.Inputs[inputID].PubKey = prevTx.Outputs[input.Out].PubKeyHash
+		txCopy.ID = txCopy.Hash()
+		txCopy.Inputs[inputID].PubKey = nil
+
+		r := big.Int{}
+		s := big.Int{}
+		signatureLen := len(input.Signature)
+		r.SetBytes(input.Signature[:(signatureLen / 2)])
+		s.SetBytes(input.Signature[(signatureLen / 2):])
+
+		x := big.Int{}
+		y := big.Int{}
+		keyLen := len(input.PubKey)
+		x.SetBytes(input.PubKey[:(keyLen / 2)])
+		y.SetBytes(input.PubKey[(keyLen / 2):])
+
+		rawPubKey := ecdsa.PublicKey{curve, &x, &y}
+		if ecdsa.Verify(&rawPubKey, txCopy.ID, &r, &s) == false {
+			return false
+		}
+	}
+
+	return true
 }

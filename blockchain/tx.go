@@ -7,10 +7,10 @@ import (
 
 // TxInput is the transaction input
 type TxInput struct {
-	ID     []byte // transaction ID
-	Out    int    // index of the output
-	Sig    []byte // digital signature
-	PubKey []byte // unhashed public key
+	ID        []byte // transaction ID
+	Out       int    // index of the output
+	Signature []byte // digital signature
+	PubKey    []byte // unhashed public key
 }
 
 // TxOutput is the transaction output
