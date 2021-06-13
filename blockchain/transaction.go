@@ -257,16 +257,16 @@ func (tx Transaction) String() string {
 
 	for i, input := range tx.Inputs {
 		lines = append(lines, fmt.Sprintf("\tInput %d:", i))
-		lines = append(lines, fmt.Sprintf("\tTXID:     %x", input.ID))
-		lines = append(lines, fmt.Sprintf("\tOut:       %d", input.Out))
-		lines = append(lines, fmt.Sprintf("\tSignature: %x", input.Signature))
-		lines = append(lines, fmt.Sprintf("\tPubKey:    %x", input.PubKey))
+		lines = append(lines, fmt.Sprintf("\t\tTXID:     %x", input.ID))
+		lines = append(lines, fmt.Sprintf("\t\tOut:       %d", input.Out))
+		lines = append(lines, fmt.Sprintf("\t\tSignature: %x", input.Signature))
+		lines = append(lines, fmt.Sprintf("\t\tPubKey:    %x", input.PubKey))
 	}
 
 	for i, output := range tx.Outputs {
 		lines = append(lines, fmt.Sprintf("\tOutput %d:", i))
-		lines = append(lines, fmt.Sprintf("\tValue:  %d", output.Value))
-		lines = append(lines, fmt.Sprintf("\tScript: %x", output.PubKeyHash))
+		lines = append(lines, fmt.Sprintf("\t\tValue:  %d", output.Value))
+		lines = append(lines, fmt.Sprintf("\t\tScript: %x", output.PubKeyHash))
 	}
 
 	return strings.Join(lines, "\n")
