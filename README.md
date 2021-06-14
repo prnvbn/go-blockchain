@@ -6,7 +6,7 @@ This module uses SHA256 hashing and so obviously should not be used for sensitiv
 
 ### Transactions
 
-As of now, 1 block can only have 1 transaction because the mining of the block is synchronous with the sending of a transaction. Each block has an input and an output. The input stores an unhashed public key and a signature of the entire transaction and the output stores a hashed public key. So to access the unspent tokens in the output, the hash of the public key in the input has to match the hashed public key in the output. You can see how a flowchart of the transaction works [here](charts/transactions.png)
+As of now, 1 block can only have 1 transaction because the mining of the block is synchronous with the sending of a transaction. Each block has an input and an output. The input stores an unhashed public key and a signature of the entire transaction and the output stores a hashed public key. So to access the unspent tokens in the output, the hash of the public key in the input has to match the hashed public key in the output. You can see the flowchart of an example transaction [here](charts/transactions.png)
 
 ## CLI
 There is a simple commandline application showing the module can be used. You can run it using `go run main.go (flags)`. See Usage to learn about the flags.
