@@ -27,7 +27,7 @@ I am assuming you have go properly installed on your machine.
 Creating 2 wallets
 ![Screenshot from 2021-06-13 16-39-21](https://user-images.githubusercontent.com/55818107/121814190-a19c3980-cc67-11eb-8463-131a91ac8727.png)
 
-Mining the genesis block
+Mining the genesis block (Output is -1 for for the coinbase transaction)
 ![Screenshot from 2021-06-13 16-39-41](https://user-images.githubusercontent.com/55818107/121814202-acef6500-cc67-11eb-9e0c-c39208bfdaee.png)
 
 Making a transaction
