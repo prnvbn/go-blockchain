@@ -45,7 +45,7 @@ If you find any issues, typos, errors or have any feature requests, feel free to
 - [X] Transactions
 - [ ] Consensus Algorithm
 - [X] Wallet Module
-- [ ] Connect wallet Module and the blockchain (In Progress)
+- [X] Integrate wallet Module and the blockchain
 - [ ] Digital Signatures
 - [ ] Merkle Tree
 - [ ] Dynamic Difficulty
