@@ -40,7 +40,7 @@ First, we created the blockchain by proving the genesis block and subsequently h
 
 If you find any issues, typos, errors or have any feature requests, feel free to create an issue or a pull request :)
 
-## TODO
+## Features
 - [x] Persistance
 - [X] Transactions
 - [ ] Consensus Algorithm
