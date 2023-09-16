@@ -1,5 +1,8 @@
-# go-blockchain
+<h1 align="center">Go Blockchain: A Learning Adventure</h1>
 
+<p align="center">
+  <em>A command-line interface for a simple blockchain module in Go.</em>
+</p>
 A commandline interface for a simple blockchain module in Go. This project is an academic pursuit of mine to learn more about blockchain and implement one on myself. The [charts](charts) folder has some great diagrams that can be used to understand certain concepts of blockchain. 
 
 This module uses SHA256 hashing and so obviously should not be used for sensitive data (SHA256 can be cracked with relative ease). The module uses [BadgerDB](https://github.com/dgraph-io/badger) to store the blockchain and ensure persistance. 
